@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace SmashcastApi\Api;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
-use Psr\Http\Message\ResponseInterface;
 
 
 class ChannelsApi extends AbstractApiBase
@@ -16,54 +12,40 @@ class ChannelsApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getChannel(string $channelId, string $accessToken): ResponseInterface
+    public function getChannel(string $channelId, string $accessToken, ?int $from = null, ?int $to = null): ?array
     {
-        return $this->apiGet("mediakey/$channelId", [], $accessToken);
+        if (!$from)
+            $from = 0;
+        if (!$to)
+            $to = time() * 1000;
+
+        $response = $this->apiGet("streamoverallstats/$channelId/$from/$to", [], $accessToken);
+        $data = json_decode($response->getBody()->getContents(), true);
+        return $data['user_name'] ? $data : null;
     }
 
     /**
      * @throws GuzzleException
      */
-    public function getChannelDetails(string $channelIdOrAccessToken): ResponseInterface
+    public function getVideos(string $channelId): ?array
     {
-        return $this->apiGet("channels/$channelIdOrAccessToken/details");
-    }
+        $response = $this->apiGet("media/video/$channelId/list");
+        $data = json_decode($response->getBody()->getContents(), true);
+        if (isset($data['success']) && $data['success'] === false)
+            return null;
 
-    /**
-     * @throws GuzzleException
-     */
-    public function getFollowers(string $channelId, ?int $from = null, ?int $to = null): ResponseInterface
-    {
-        $queryParams = [];
+        function extractData($video) {
+            return [
+                'id' => $video['media_id'],
+                'date' => $video['media_date_added'],
+                'title' => $video['media_title'],
+                'duration' => $video['duration'],
+                'category' => $video['category_name'],
+                'thumbnail' => $video['media_thumbnail']
+            ];
+        }
 
-        if ($from !== null)
-            $queryParams['from'] = $from;
-        else
-            $queryParams['from'] = date('c');
-
-        if ($to !== null)
-            $queryParams['to'] = $to;
-
-        return $this->apiGet("channels/$channelId/analytics/tsdb/followers", $queryParams);
-    }
-
-    /**
-     * @throws GuzzleException
-     * https://dev.mixer.com/rest/index.html#channels__channelId__recordings_get
-     */
-    public function getRecordings(string $channelId, ?int $page = null, ?int $limit = null, ?string $where = null, ?string $fields = null): ResponseInterface
-    {
-        $queryParams = [];
-
-        if ($page !== null)
-            $queryParams['page'] = $page;
-        if ($page !== null)
-            $queryParams['limit'] = $limit;
-        if ($page !== null)
-            $queryParams['where'] = $where;
-        if ($page !== null)
-            $queryParams['fields'] = $fields;
-
-        return $this->apiGet("channels/$channelId/recordings", $queryParams);
+        $videos = array_map('extractData', $data['videos']);
+        return $videos;
     }
 }

@@ -6,9 +6,6 @@ namespace SmashcastApi\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
-use Psr\Http\Message\ResponseInterface;
 
 class OauthApi extends AbstractApiBase
 {
@@ -54,6 +51,7 @@ class OauthApi extends AbstractApiBase
 
     /**
      * @throws GuzzleException
+     * @deprecated This does not seem to ever work; perhaps the api documentation is bad
      */
     public function isValidAccessToken(string $accessToken): bool
     {

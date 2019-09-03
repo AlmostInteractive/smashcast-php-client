@@ -26,16 +26,14 @@ abstract class AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    protected function apiGet(string $uriEndpoint, array $queryParams = [], string $bearer = null): ResponseInterface
+    protected function apiGet(string $uriEndpoint, array $queryParams = [], string $accessToken = null): ResponseInterface
     {
-        $headers = ['Client-ID' => $this->appToken];
-        if ($bearer)
-            $headers['Authorization'] = sprintf('Bearer %s', $bearer);
+        if ($accessToken)
+            $queryParams['authToken'] = $accessToken;
 
         $request = new Request(
             'GET',
-            sprintf('%s%s', $uriEndpoint, $this->generateQueryParams($queryParams)),
-            $headers
+            sprintf('%s%s', $uriEndpoint, $this->generateQueryParams($queryParams))
         );
 
         return $this->guzzleClient->send($request);
