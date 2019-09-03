@@ -21,7 +21,7 @@ class ChannelsApi extends AbstractApiBase
 
         $response = $this->apiGet("streamoverallstats/$channelId/$from/{$to}000", [], $accessToken);
         $data = json_decode($response->getBody()->getContents(), true);
-        return isset($data['user_name']) ? $data : null;
+        return isset($data['channel']) ? $data : null;
     }
 
     /**
