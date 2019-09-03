@@ -13,8 +13,21 @@ class UsersApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getUserByAccessToken(string $accessToken): ResponseInterface
+    public function getUserByAuthToken(string $accessToken): ?string
     {
-        return $this->apiGet('userfromtoken', ['authToken' => $accessToken]);
+        $response = $this->apiGet('userfromtoken', ['authToken' => $accessToken]);
+        $userData = json_decode($response->getBody()->getContents(), true);
+
+        return $userData['user_name'] ?? null;
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getUserInfo(string $userId): ?array
+    {
+        $response = $this->apiGet("user/$userId");
+        $userInfo = json_decode($response->getBody()->getContents(), true);
+        return isset($userInfo['user_name']) ? $userInfo : null;
     }
 }

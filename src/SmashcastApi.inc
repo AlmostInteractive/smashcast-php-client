@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace SmashcastApi;
 
 use GuzzleHttp\Client;
+use SmashcastApi\Api\ChannelsApi;
 use SmashcastApi\Api\OauthApi;
 use SmashcastApi\Api\UsersApi;
 
@@ -28,13 +29,13 @@ class SmashcastApi
 
         $this->oauthApi = new OauthApi($appName, $appToken, $appSecret, $guzzleClient);
         $this->usersApi = new UsersApi($appName, $appToken, $guzzleClient);
-        //$this->channelsApi = new ChannelsApi($appName, $appToken, $guzzleClient);
+        $this->channelsApi = new ChannelsApi($appName, $appToken, $guzzleClient);
     }
 
     public function getOauthApi(): OauthApi { return $this->oauthApi; }
 
     public function getUsersApi(): UsersApi { return $this->usersApi; }
 
-    //public function getChannelsApi(): ChannelsApi { return $this->channelsApi; }
+    public function getChannelsApi(): ChannelsApi { return $this->channelsApi; }
 }
 

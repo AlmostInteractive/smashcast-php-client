@@ -37,16 +37,19 @@ class OauthApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getUserAccessToken(string $requestToken): ResponseInterface
+    public function getUserAccessToken(string $requestToken): ?string
     {
         $hash = base64_encode($this->appToken . $this->appSecret);
 
-        return $this->apiPost('oauth/exchange',
+        $response = $this->apiPost('oauth/exchange',
             [
                 'request_token' => $requestToken,
                 'app_token' => $this->appToken,
                 'hash' => $hash
             ]);
+
+        $token = json_decode($response->getBody()->getContents(), true);
+        return $token['access_token'] ?? null;
     }
 
     /**
