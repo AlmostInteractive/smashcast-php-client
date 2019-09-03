@@ -16,9 +16,9 @@ class ChannelsApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getChannel(string $channelId, string $authToken): ResponseInterface
+    public function getChannel(string $channelId, string $accessToken): ResponseInterface
     {
-        return $this->apiGet("mediakey/$channelId", [], $authToken);
+        return $this->apiGet("mediakey/$channelId", [], $accessToken);
     }
 
     /**

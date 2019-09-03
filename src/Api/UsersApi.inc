@@ -13,9 +13,9 @@ class UsersApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getUserByAuthToken(string $authToken): ?string
+    public function getUserByAccessToken(string $accessToken): ?string
     {
-        $response = $this->apiGet("userfromtoken/$authToken");
+        $response = $this->apiGet("userfromtoken/$accessToken");
         $userData = json_decode($response->getBody()->getContents(), true);
 
         return $userData['user_name'] ?? null;
@@ -24,9 +24,9 @@ class UsersApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getUserInfo(string $userId, ?string $authToken = null): ?array
+    public function getUserInfo(string $userId, ?string $accessToken = null): ?array
     {
-        $response = $this->apiGet("user/$userId", [], $authToken);
+        $response = $this->apiGet("user/$userId", [], $accessToken);
         $userInfo = json_decode($response->getBody()->getContents(), true);
         return isset($userInfo['user_name']) ? $userInfo : null;
     }
