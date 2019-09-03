@@ -42,16 +42,14 @@ abstract class AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    protected function apiPost(string $uriEndpoint, ?array $body = null, string $bearer = null): ResponseInterface
+    protected function apiPost(string $uriEndpoint, ?array $body = null, string $authToken = null): ResponseInterface
     {
-        $headers = ['Client-ID' => $this->appToken];
-        if ($bearer)
-            $headers['Authorization'] = sprintf('Bearer %s', $bearer);
+        if ($authToken)
+            $body['authToken'] = $authToken;
 
         $request = new Request(
             'POST',
-            $uriEndpoint,
-            $headers);
+            $uriEndpoint);
 
         $options = $body
             ? [
@@ -66,7 +64,7 @@ abstract class AbstractApiBase
      * $queryParamsMap should be a mapping of the param key expected in the API call URL,
      * and the value to be sent for that key.
      *
-     * [['key' => 'param_key', 'value' => 42],['key' => 'other_key', 'value' => 'asdf']]
+     * ['param_key' => 42, 'other_key' => 'asdf']
      * would result in
      * ?param_key=42&other_key=asdf
      */

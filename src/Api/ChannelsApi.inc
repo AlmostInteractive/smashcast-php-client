@@ -17,11 +17,11 @@ class ChannelsApi extends AbstractApiBase
         if (!$from)
             $from = 0;
         if (!$to)
-            $to = time() * 1000;
+            $to = time();
 
-        $response = $this->apiGet("streamoverallstats/$channelId/$from/$to", [], $accessToken);
+        $response = $this->apiGet("streamoverallstats/$channelId/$from/{$to}000", [], $accessToken);
         $data = json_decode($response->getBody()->getContents(), true);
-        return $data['user_name'] ? $data : null;
+        return isset($data['user_name']) ? $data : null;
     }
 
     /**
@@ -45,7 +45,6 @@ class ChannelsApi extends AbstractApiBase
             ];
         }
 
-        $videos = array_map('extractData', $data['videos']);
-        return $videos;
+        return array_map('extractData', $data['videos']);
     }
 }
