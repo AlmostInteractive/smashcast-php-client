@@ -37,7 +37,7 @@ class OauthApi extends AbstractApiBase
     /**
      * @throws GuzzleException
      */
-    public function getUserAccessToken(string $requestToken, string $redirectUri): ResponseInterface
+    public function getUserAccessToken(string $requestToken): ResponseInterface
     {
         $hash = base64_encode($this->appToken . $this->appSecret);
 
